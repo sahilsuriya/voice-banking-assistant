@@ -1,150 +1,491 @@
-AI Voice Assistant for Financial Operations
-**AGENT/
-├── .gitignore              # Ignores venv and model files
-├── main.py                 # (Terminal 2) The FastAPI Backend
-├── README.md               # This file
-├── frontend/               # (Terminal 3) The Webpage
+# AI Voice Assistant for Financial Operations
+
+This project is a Proof-of-Concept (POC) AI-powered Voice Banking Assistant built using **Rasa NLU**, **FastAPI**, and a lightweight **HTML/CSS/JavaScript frontend**.
+
+The assistant allows users to perform mock financial operations using natural language voice commands while keeping conversations private through a self-hosted open-source NLP pipeline.
+
+---
+
+# Features
+
+- Voice-based banking assistant
+- Speech-to-Text using Browser Web Speech API
+- Text-to-Speech responses
+- Secure intent recognition using Rasa NLU
+- Mock financial operations
+- Multi-step conversational flow
+- FastAPI backend for banking logic
+- Privacy-focused architecture
+- No third-party NLP APIs
+
+---
+
+# Tech Stack
+
+| Component | Technology |
+|------------|-------------|
+| Frontend | HTML, CSS, JavaScript |
+| Backend | FastAPI |
+| NLU Engine | Rasa NLU |
+| Voice Input | Web Speech API |
+| Voice Output | Speech Synthesis API |
+| Server | Uvicorn |
+
+---
+
+# Project Architecture
+
+```text
+User Voice
+   │
+   ▼
+Frontend (Browser UI)
+   │
+   ▼
+FastAPI Backend
+   │
+   ▼
+Rasa NLU Engine
+   │
+   ▼
+Intent + Entities
+   │
+   ▼
+Backend Banking Logic
+   │
+   ▼
+Frontend Voice Response
+```
+
+---
+
+# Project Structure
+
+```text
+AGENT/
+├── .gitignore
+├── README.md
+├── main.py                     # FastAPI Backend
+│
+├── frontend/                   # Frontend Web Application
 │   ├── index.html
 │   ├── script.js
 │   └── style.css
-├── rasa_agent/             # (Terminal 1) The NLU "Brain"
-│   ├── config.yml          # Rasa: How to train
-│   ├── domain.yml          # Rasa: List of intents/entities
+│
+├── rasa_agent/                 # Rasa NLU Service
+│   ├── config.yml
+│   ├── domain.yml
 │   ├── data/
-│   │   └── nlu.yml         # Rasa: Training examples
+│   │   └── nlu.yml
 │   └── models/
-│       └── nlu-....tar.gz  # The trained model
-└── venv-rasa/                # Python virtual environment (ignored by Git)
-**
+│       └── nlu-....tar.gz
+│
+└── venv-rasa/                  # Python Virtual Environment
+```
 
-This is a proof-of-concept for an AI-powered Voice Banking Assistant, built for the "AI Voice Assistant for Financial Operations" challenge.
+---
 
-It allows users to perform mock financial operations using natural language voice commands. The project focuses on privacy and control by using the open-source Rasa NLU for all intent processing, ensuring no user conversation data is sent to third-party cloud services.
+# How It Works
 
-Project Architecture
+The project consists of three separate services:
 
-This project runs as three separate, communicating services:
+## 1. Frontend (The Face)
 
-Frontend (The "Face"): A simple HTML/CSS/JS web page (./frontend) that runs in the browser. It handles capturing the user's voice (Speech-to-Text) and speaking the assistant's responses (Text-to-Speech).
+The frontend is responsible for:
 
-Backend (The "Conductor"): A FastAPI server (main.py) that acts as a secure proxy. It handles user login, manages banking logic (like checking balances), and communicates with the NLU "brain."
+- Capturing user voice
+- Converting speech to text
+- Sending requests to the backend
+- Displaying assistant responses
+- Speaking responses using text-to-speech
 
-NLU (The "Brain"): A Rasa NLU server (./rasa_agent) that receives text from the backend, determines the user's intent (e.g., check_balance), and sends that structured intent back to the backend.
+### Technologies Used
 
-Prerequisites
+- HTML
+- CSS
+- JavaScript
+- Web Speech API
 
-Python 3.10 or Python 3.11.
-(This project is NOT compatible with Python 3.12 or newer due to Rasa/TensorFlow dependencies).
+---
 
-A Python virtual environment.
+## 2. Backend (The Conductor)
 
-A web browser that supports the Web Speech API (Google Chrome or Microsoft Edge are recommended).
+The FastAPI backend acts as the orchestrator between the frontend and the Rasa NLU engine.
 
-Installation
+### Responsibilities
 
-Clone the repository (or ensure you have all the files in the AGENT folder).
+- User authentication
+- Session management
+- Banking operations
+- Communicating with Rasa NLU
+- Returning responses to the frontend
 
-Create and activate your virtual environment:
-(From the AGENT directory)
+### Example Operations
 
-# Make sure you are using Python 3.10 or 3.11
+- Check balance
+- View transaction history
+- Transfer money
+- Cash inquiries
+
+---
+
+## 3. Rasa NLU (The Brain)
+
+Rasa processes user messages and extracts:
+
+- Intent
+- Entities
+
+### Example
+
+User says:
+
+```text
+Send 50 dollars to Jane
+```
+
+Rasa extracts:
+
+```json
+{
+  "intent": "transfer_money",
+  "entities": {
+    "amount": "50",
+    "recipient": "Jane"
+  }
+}
+```
+
+---
+
+# Prerequisites
+
+Before running the project, ensure you have:
+
+- Python 3.10 or Python 3.11
+- pip
+- Python virtual environment
+- Google Chrome or Microsoft Edge browser
+
+> Note: Python 3.12+ is NOT supported due to Rasa/TensorFlow compatibility issues.
+
+---
+
+# Installation
+
+## Step 1: Clone the Repository
+
+```bash
+git clone <your-repository-url>
+cd AGENT
+```
+
+---
+
+## Step 2: Create Virtual Environment
+
+### Windows
+
+```bash
 py -3.10 -m venv venv-rasa
+```
 
-# Activate the environment
+### Activate Virtual Environment
+
+```bash
 .\venv-rasa\Scripts\activate
+```
 
+---
 
-Install all required packages:
+## Step 3: Install Dependencies
 
-# This installs Rasa, FastAPI, Uvicorn, and httpx
+```bash
 pip install rasa fastapi "uvicorn[standard]" pydantic httpx
+```
 
+---
 
-Train the NLU model:
-This is a one-time setup step.
+# Train the Rasa NLU Model
 
-# Navigate into the rasa_agent folder
+Navigate into the `rasa_agent` directory:
+
+```bash
 cd rasa_agent
+```
 
-# Train the NLU model
+Train the model:
+
+```bash
 rasa train nlu
+```
 
-# Go back to the main project folder
+Return to the root directory:
+
+```bash
 cd ..
+```
 
+---
 
-How to Run
+# Running the Project
 
-You must run all three services simultaneously in three separate terminals.
+You must run all three services simultaneously in separate terminals.
 
-➡️ Terminal 1: Start the "Brain" (Rasa NLU Server)
+---
 
-Open your first terminal.
+# Terminal 1 — Start Rasa NLU Server
 
-Activate the virtual environment: .\venv-rasa\Scripts\activate
+Open Terminal 1:
 
-Navigate to the rasa_agent directory: cd rasa_agent
-
-Start the Rasa server:
-
+```bash
+.\venv-rasa\Scripts\activate
+cd rasa_agent
 rasa run -m models --enable-api
+```
 
+The Rasa server will run on:
 
-Leave this terminal running. It will serve the NLU model on http://localhost:5005.
+```text
+http://localhost:5005
+```
 
-➡️ Terminal 2: Start the "Backend" (FastAPI Server)
+---
 
-Open a new terminal.
+# Terminal 2 — Start FastAPI Backend
 
-Navigate to the AGENT directory.
+Open Terminal 2:
 
-Activate the virtual environment: .\venv-rasa\Scripts\activate
-
-Start the FastAPI server:
-
+```bash
+.\venv-rasa\Scripts\activate
 uvicorn main:app --reload
+```
 
+The backend server will run on:
 
-Leave this terminal running. It will serve the API on http://localhost:8000.
+```text
+http://localhost:8000
+```
 
-➡️ Terminal 3: Start the "Frontend" (Web Server)
+---
 
-Open a third terminal.
+# Terminal 3 — Start Frontend Server
 
-Navigate to the frontend directory: cd frontend
+Open Terminal 3:
 
-Start the simple Python web server:
-
-# This serves the files on port 8001
+```bash
+cd frontend
 python -m http.server 8001
+```
 
+The frontend will run on:
 
-Leave this terminal running.
+```text
+http://localhost:8001
+```
 
-How to Use
+---
 
-Open your web browser (Chrome or Edge) and go to: http://localhost:8001
+# Usage
 
-Your browser will ask for microphone permission. Click Allow.
+Open your browser and navigate to:
 
-Log in using the mock credentials:
+```text
+http://localhost:8001
+```
 
+Allow microphone permissions when prompted.
+
+---
+
+# Demo Login Credentials
+
+```text
 Username: user123
-
 Password: password123
+```
 
-Click and hold the "Hold to Speak" button.
+---
 
-Try saying one of the following commands:
+# Example Voice Commands
 
+## Balance Inquiry
+
+```text
 "What is my balance?"
+```
 
+```text
 "Show me my cash."
+```
 
+---
+
+## Transaction History
+
+```text
 "What's my transaction history?"
+```
 
-"I want to send money." (The bot will ask follow-up questions).
+---
 
+## Money Transfer
+
+```text
+"I want to send money."
+```
+
+```text
 "Send 50 dollars to Jane."
+```
 
-Project Structure
+---
+
+# Example Conversation Flow
+
+```text
+User: Send money
+Bot: Sure, how much would you like to send?
+User: 50 dollars
+Bot: Who would you like to send it to?
+User: Jane
+Bot: Successfully transferred 50 dollars to Jane.
+```
+
+---
+
+# API Communication Flow
+
+```text
+Frontend
+   │
+   ▼
+POST /chat
+   │
+   ▼
+FastAPI Backend
+   │
+   ▼
+POST /model/parse
+   │
+   ▼
+Rasa NLU
+   │
+   ▼
+Intent + Entities
+   │
+   ▼
+Business Logic
+   │
+   ▼
+Frontend Response
+```
+
+---
+
+# Security & Privacy
+
+This project prioritizes user privacy and local processing.
+
+## Privacy Benefits
+
+- No OpenAI APIs
+- No external NLP providers
+- Self-hosted intent recognition
+- Local conversation processing
+- User voice data remains local
+
+---
+
+# Sample Intents
+
+| Intent | Description |
+|--------|-------------|
+| check_balance | Check account balance |
+| transaction_history | View transaction history |
+| transfer_money | Transfer money |
+| greet | Greeting |
+| goodbye | End conversation |
+
+---
+
+# Future Improvements
+
+- Real banking API integration
+- JWT authentication
+- Database support
+- Redis caching
+- Multi-language support
+- Voice biometrics
+- OTP verification
+- Docker deployment
+- Kubernetes deployment
+- Fraud detection system
+- LLM integration for advanced conversations
+
+---
+
+# Troubleshooting
+
+## Rasa Server Not Starting
+
+Check your Python version:
+
+```bash
+python --version
+```
+
+Use Python 3.10 or 3.11 only.
+
+---
+
+## Microphone Not Working
+
+- Use Chrome or Edge browser
+- Allow microphone permissions
+- Use HTTPS in production
+
+---
+
+## Frontend Cannot Reach Backend
+
+Ensure:
+
+- Backend is running on port 8000
+- Rasa server is running on port 5005
+- No firewall is blocking ports
+
+---
+
+# Development Notes
+
+This project was built as a Proof-of-Concept for the:
+
+```text
+AI Voice Assistant for Financial Operations Challenge
+```
+
+The project demonstrates:
+
+- Conversational AI
+- Voice interfaces
+- Secure NLP systems
+- Financial operation automation
+
+---
+
+# License
+
+This project is intended for educational and demonstration purposes.
+
+---
+
+# Author
+
+Developed for the:
+
+```text
+AI Voice Assistant for Financial Operations
+```
+
+challenge.
