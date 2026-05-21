@@ -1,4 +1,21 @@
 AI Voice Assistant for Financial Operations
+**AGENT/
+├── .gitignore              # Ignores venv and model files
+├── main.py                 # (Terminal 2) The FastAPI Backend
+├── README.md               # This file
+├── frontend/               # (Terminal 3) The Webpage
+│   ├── index.html
+│   ├── script.js
+│   └── style.css
+├── rasa_agent/             # (Terminal 1) The NLU "Brain"
+│   ├── config.yml          # Rasa: How to train
+│   ├── domain.yml          # Rasa: List of intents/entities
+│   ├── data/
+│   │   └── nlu.yml         # Rasa: Training examples
+│   └── models/
+│       └── nlu-....tar.gz  # The trained model
+└── venv-rasa/                # Python virtual environment (ignored by Git)
+**
 
 This is a proof-of-concept for an AI-powered Voice Banking Assistant, built for the "AI Voice Assistant for Financial Operations" challenge.
 
@@ -131,20 +148,3 @@ Try saying one of the following commands:
 "Send 50 dollars to Jane."
 
 Project Structure
-
-AGENT/
-├── .gitignore              # Ignores venv and model files
-├── main.py                 # (Terminal 2) The FastAPI Backend
-├── README.md               # This file
-├── frontend/               # (Terminal 3) The Webpage
-│   ├── index.html
-│   ├── script.js
-│   └── style.css
-├── rasa_agent/             # (Terminal 1) The NLU "Brain"
-│   ├── config.yml          # Rasa: How to train
-│   ├── domain.yml          # Rasa: List of intents/entities
-│   ├── data/
-│   │   └── nlu.yml         # Rasa: Training examples
-│   └── models/
-│       └── nlu-....tar.gz  # The trained model
-└── venv-rasa/                # Python virtual environment (ignored by Git)
